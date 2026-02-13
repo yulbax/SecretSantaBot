@@ -1,0 +1,91 @@
+package io.github.yulbax.santabot.i18n
+
+import io.github.yulbax.santabot.model.Language
+import kotlinx.serialization.json.Json
+import java.nio.charset.StandardCharsets
+
+// ============================================================================
+// STRING KEYS
+// ============================================================================
+
+enum class StringKey {
+    // Welcome
+    WELCOME_TITLE, WELCOME_BODY, WELCOME_BACK, LANGUAGE_CHANGED,
+
+    // Main menu
+    CREATE_GAME_BUTTON, ACTIVE_GAMES_BUTTON, CHANGE_LANGUAGE_BUTTON, CANCEL_BUTTON, GAME_CREATION_CANCELLED,
+
+    // Game creation
+    PROMPT_GAME_NAME, PROMPT_START_DATE, PROMPT_END_DATE, PROMPT_CREATOR_NAME, CREATOR_IN_GAME,
+
+    // Game joining
+    WELCOME_TO_GAME, PLAYER_IN_GAME,
+
+    // Wishlist
+    PROMPT_WISHLIST, DONE_BUTTON,
+
+    // Game details & management
+    SELECT_GAME_DETAILS, NO_ACTIVE_GAMES, GAME_DETAILS_TITLE,
+    STATUS_LABEL, START_DATE_LABEL, END_DATE_LABEL, PARTICIPANTS_LABEL,
+    YOUR_GIFTEE, NOT_SET,
+    EDIT_WISHLIST_BUTTON, ADD_WISHLIST_BUTTON, DELETE_GAME_BUTTON, LEAVE_GAME_BUTTON,
+    START_GAME_NOW_BUTTON, ANONYMOUS_MESSAGE_BUTTON,
+    YOU_LEFT_GAME, YOU_LEFT_GAME_SUCCESS, GAME_DELETED, GAME_DELETED_SUCCESS,
+
+    // Anonymous message
+    PROMPT_ANONYMOUS_MESSAGE, ANONYMOUS_MESSAGE_SENT, ANONYMOUS_MESSAGE_HEADER,
+
+    // Notifications
+    GAME_CANCELLED_NOTIFICATION, GAME_STARTED_SUCCESS, GAME_START_NOTIFICATION,
+    GAME_END_NOTIFICATION, GAME_FAILED_NOT_ENOUGH_PLAYERS,
+
+    // Errors
+    DATE_IN_PAST_ERROR, START_DATE_TOO_FAR_ERROR, END_DATE_ERROR, END_DATE_TOO_FAR_ERROR,
+    DATE_FORMAT_ERROR, GAME_NOT_FOUND, GAME_ALREADY_STARTED, ALREADY_IN_GAME,
+    ONLY_CREATOR_CAN_DELETE, NOT_ENOUGH_PLAYERS_ERROR,
+    GAME_NAME_EMPTY_ERROR, GAME_NAME_TOO_LONG_ERROR,
+    PLAYER_NAME_EMPTY_ERROR, PLAYER_NAME_TOO_LONG_ERROR,
+    WISHLIST_TOO_LONG_ERROR, MESSAGE_TOO_LONG_ERROR,
+
+    // Game Statuses
+    STATUS_CREATING, STATUS_RECRUITING, STATUS_IN_PROGRESS, STATUS_FINISHED,
+
+    // TUI Panel
+    BOT_CONTROL_PANEL_TITLE, BOT_STATUS_DEFAULT, BOT_STATUS_LABEL,
+    TOTAL_PLAYERS_LABEL, ACTIVE_GAMES_LABEL, RECRUITING_GAMES_LABEL, FINISHED_GAMES_LABEL,
+    BOT_STATUS_BORDER_TITLE, ACTIVE_THREADS_LABEL,
+    TOTAL_MEMORY_LABEL, USED_MEMORY_LABEL, FREE_MEMORY_LABEL, MAX_MEMORY_LABEL,
+    SYSTEM_INFO_BORDER_TITLE,
+    START_BOT_BUTTON, STOP_BOT_BUTTON, SETTINGS_BUTTON, REFRESH_STATUS_BUTTON, EXIT_BUTTON,
+    BOT_STATUS_RUNNING, BOT_STATUS_STOPPED,
+    ERROR_TITLE, TOKEN_USERNAME_NOT_CONFIGURED,
+    SUCCESS_TITLE, BOT_STARTED_SUCCESS,
+    INFO_TITLE, BOT_ALREADY_STOPPED,
+    BOT_STOPPED_TITLE, BOT_STOPPED_SUCCESS,
+    RESTART_TITLE, BOT_RESTARTED_SUCCESS,
+    SETTINGS_WINDOW_TITLE, BOT_TOKEN_LABEL, BOT_USERNAME_LABEL,
+    SAVE_BUTTON, SETTINGS_SAVED_RESTART_PROMPT,
+    SAVED_TITLE, SETTINGS_SAVED_SUCCESS,
+    EXIT_TITLE, EXIT_CONFIRMATION, CONSOLE_LANGUAGE_LABEL,
+    YES_BUTTON, NO_BUTTON, BOT_ALREADY_RUNNING, BOT_START_ERROR,
+    NAV_HINT_MAIN, NAV_HINT_DIALOG, NAV_HINT_SETTINGS
+}
+
+object Strings {
+    private val bundles: Map<String, Map<String, String>> by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+        Language.entries.associate { it.code to readBundle(it.code) }
+    }
+
+    fun preloadAll() { bundles.size }
+
+    fun get(key: StringKey, lang: Language): String = bundles[lang.code]?.get(key.name) ?: key.name
+
+    private fun readBundle(langCode: String): Map<String, String> {
+        val stream = this::class.java.classLoader.getResourceAsStream("i18n/$langCode.json")
+        return stream?.let {
+            runCatching {
+                Json.decodeFromString<Map<String, String>>(it.readAllBytes().toString(StandardCharsets.UTF_8))
+            }.getOrElse { emptyMap() }
+        } ?: emptyMap()
+    }
+}

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!--
+    Настройки логирования для SecretSantaBot
+
+    Уровни: TRACE < DEBUG < INFO < WARN < ERROR
+    - DEBUG: показывает SQL запросы (полезно для отладки)
+    - INFO: скрывает SQL запросы (для продакшена)
+    -->
+
+    <!-- Exposed ORM: скрыть SQL запросы -->
+    <logger name="Exposed" level="WARN"/>
+
+    <!-- SQLite драйвер: только ошибки -->
+    <logger name="org.sqlite" level="ERROR"/>
+
+    <!-- OkHttp (для Telegram API): только предупреждения -->
+    <logger name="okhttp3" level="WARN"/>
+
+    <!-- Telegram Bot API -->
+    <logger name="org.telegram" level="INFO"/>
+
+    <!-- Telegram Long Polling: скрыть повторяющиеся сетевые ошибки -->
+    <logger name="org.telegram.telegrambots.longpolling.BotSession" level="WARN"/>
+
+    <!-- Основной appender для консоли -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss} %-5level %logger{20} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Root logger: INFO для всего остального -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>
+

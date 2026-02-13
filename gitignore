@@ -1,0 +1,25 @@
+ # Gradle
+.gradle
+build/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Build artifacts
+*.jar
+*.war
+
+# Local properties
+local.properties
+
+# State files - VERY IMPORTANT to prevent leaking user data
+santabot_state.json
+santabot_backup.json
+
+# OS-specific
+.DS_Store
+Thumbs.db
